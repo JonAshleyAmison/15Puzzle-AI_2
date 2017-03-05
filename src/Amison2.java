@@ -12,13 +12,16 @@
 // Description: refer to the program description
 // Data Values: none
 // Constant:    none 
-// Globals:      list
+// Globals:     input- access to keyboard input class
+//              closed- used by bestFirst as the closed priority queue
+//              open - used by bestFirst as the open priority queue
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 public class Amison2 {
     public static KeyboardInputClass input = new KeyboardInputClass();// access to KeyBoardInputClass()
     public static LinkedQueue closed = new LinkedQueue();// used by the bestFirst algorithm as the closed priority queue
     public static LinkedQueue open = new LinkedQueue();// used by the bestFirst algorithm as the open priority queue
+    public static LList parentChild = new LList();//holds the boardClass() of each board, used to trace the path in breadthFirst
 //*************************************************************************************************************************
 //Method:	main
 //Description:	handles the flow of the program, gets the start and goal state
@@ -27,9 +30,12 @@ public class Amison2 {
 //Calls:        KeyBoardInputClass.getString(), String.toCharArray(), String.length()
 //              mapper1(), scramble(), mapper2(), KeyboardInputClass.getInteger()
 //              KeyboardInputClass.getCharacter(), bestFirst(), breadthFirst()
-//Globals:	
-
+//Globals:	input- access to keyboard input class
     public static void main(String[] args) {
+        System.out.println("Reagan JonAshley Amison");
+        System.out.println("This program solves the 15 puzzle with 16 characters including atleast 1 blank");
+        System.out.println("------------------------------------------------------------------------------");
+        System.out.println("");
         while (true) {
             char[] charArrayGoalFirst = new char[16];// convert the string to an array of chars
             String goal = "";
@@ -94,10 +100,13 @@ public class Amison2 {
 //Method:	scramble
 //Description:	scrambles the board an amount of random times, if the user doesn't want to
 //              scramble the board, they enter 0 and then input the desired foal string
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   int[][] passed - pass goal state to be scrambled
+//              String goal - passed goal string, used to print for the user
+//Returns:     	int[][] scrambledArray - scrambled array to be searched on
+//Calls:        KeyboardInputClass.getInteger(), KeyboardInputClass.getString(), String.toCharArray()
+//              mapper1(), new LList(), deepCopy(), getChildren(), Math.random(), LList.getLength(),
+//              isOnOpenClosed(), LList.add(), LList.remove(), LList.isEmpty(), 
+//Globals:	input- access to KeyboardInputClass()
 
     public static int[][] scramble(int[][] passed, String goal) {
         int[][] scrambledArray = new int[4][4];// make a new array to hold the scrambled array
@@ -145,16 +154,17 @@ public class Amison2 {
         }// end else
         return scrambledArray;// returns the scrambled array
     }// end randomScramble   
-    public static LList parentChild = new LList();// used to store the parent and child objects
 //*************************************************************************************************************************
 //Method:	breadthFirst
 //Description:	does the breadthFirst search if the user wants to
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
-    public static int[][] breadthFirst(int[][] passed, int[][] goal) {
+//Parameters:   int[][] passed - passed array as start state
+//              int[][] goal - passed goal state
+//Returns:     	none
+//Calls:        parentChild.clear(), LList.isEmpty(), new LList(), LList.remove(), intComparer(),
+//              LList.getEntry(), KeyboardInputClass.getString(), getChildren(), LList.add(), new boardClass
+//Globals:	parentChild- access to the parentChild list
+//              input - access to keyboardInputClass()
+    public static void breadthFirst(int[][] passed, int[][] goal) {
         System.out.println("working....");
         parentChild.clear();
         boolean success = false;
@@ -190,15 +200,16 @@ public class Amison2 {
             System.out.println("No Possible Path Found");
         }
         System.out.println("**************************************************");
-        return found;
     }
 //*************************************************************************************************************************
 //Method:	isOnOpenClosed
 //Description:	checks to see if the current array is on the Open or Closed lists for breadth-first search
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   LList open- passed open List
+//              LList closed - passed closed List
+//              int[][] passed - passed array to be checked agains open and closed lists
+//Returns:     	boolean returner - if the array is in either list
+//Calls:        LList.getLength(), intComparer(), LList.getEntry()
+//Globals:	none
 
     public static boolean isOnOpenClosed(LList open, LList closed, int[][] passed) {
         boolean returner = false;
@@ -228,10 +239,13 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	traceBackBreadth
 //Description:	traces back the path taken in the breadth-first search in order to print it out for the user to see
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   int[][] current - passed last state of the search algorithm
+//              int[][] goal - goal state
+//Returns:     	int numMoves - the number of moves it took to find the goal state
+//Calls:        newLList(), keyboardInputClass.getCharacter(), LList.add(), intComparer(), findParentBreadth(),
+//              LList.getLength(), mapper2(), KeyboardInputClass.getString()
+//Globals:	input- access to keyBoardInputClass()
+//              parentChild - access to the parentChild list
 
     public static int traceBackBreadth(int[][] current, int[][] start) {
         char showMoves = input.getCharacter(true, 'N', "Y,N", 1, "Would You Like To Step Through The Moves? (Y/N Default=N)");
@@ -263,11 +277,10 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	findParentBreadth
 //Description:	finds the parent of the current board for the traceBackBreadth algorithm
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   int[][] passed - array passed that needs to find the parent
+//Returns:     	int[][] returner - the found parent
+//Calls:        LList.getLength(), LList.getEntry(), intComparer(), deepCopy()
+//Globals:	none
     public static int[][] findParentBreadth(int[][] passed, LList passedList) {
         int[][] returner = new int[passed.length][passed.length];
         for (int i = passedList.getLength(); i > 0; i--) {
@@ -283,11 +296,10 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	getChildren
 //Description:	gets the children of any passed board
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   int[][] passed - array that needs to have the children
+//Returns:     	LList children - a list of arrays of children for the passed array
+//Calls:        new LList(), deepCopy(), LList.add(), 
+//Globals:	none
     public static LList getChildren(int[][] passed) {
         LList children = new LList();                       //LList to hold the children
         for (int i = 0; i < passed.length; i++) {
@@ -325,13 +337,15 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	bestFirst
 //Description:	best-first-search algorithm
-//Parameters:   
-//Returns:     	
-//Calls:        
+//Parameters:   int[][] start - passed start state
+//              int[][] goal - passed goal state
+//Returns:     	none
+//Calls:        LList.clear(), keyboardInputClass.getCharacter(), new boardClass(), LinkedQueue.priorityEnqueue()
+//              LList.isEmpty(), LinkedQueue.dequeue, queueToList(), tracebackBest(), LList.getLength(), 
+//              LList.getEntry(), LList.add(), LList.getLength(), isOnOpenBest(), isOnClosedBest(), 
 //Globals:	
 
     public static void bestFirst(int[][] start, int[][] goal) {
-        parentChild.clear();
         boolean success = false;
         char depth = input.getCharacter(true, 'Y', "Y,N", 1, "Use Depth-Penalty? (Y/N Default:Y)");
         System.out.println("Using Sum Of Tiles Out Of Place");
@@ -382,11 +396,10 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	queueToList
 //Description:	changes a queue to a Linked List
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   LinkedQueue passed - passed queue to change to list
+//Returns:     	LList newList - the copied queue to a list
+//Calls:        LinkedQueue.isEmpty(), LList.add(), LinkedQueue.dequeue(), new LList()
+//Globals:	none
     public static LList queueToList(LinkedQueue passed) {
         LList newList = new LList();
         while (passed.isEmpty() == false) {
@@ -398,11 +411,11 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	isOnOpenBest
 //Description:	checks to see if the current board is on the Open list, for bestFirst
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   boardClass current - passed boardClass object to see if it is on the open queue
+//Returns:     	boolean returner - if current is on the list or not
+//Calls:        new LList(), LinkedQueue.isEmpty(), LinkedQueue.dequeue(), intComparer(), LinkedQueue.priorityEnqueue()
+//              LList.add(), LList.getEntry()
+//Globals:	open - queue of the open list
     public static boolean isOnOpenBest(boardClass current) {
         boolean returner = false;
         LList holder = new LList();
@@ -429,11 +442,11 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	isOnClosedBest
 //Description:	checks to see if the current board is on the closed list, for bestFirst
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   boardClass current - passed boardClass object to see if it is on the closed queue
+//Returns:     	boolean returner - if the current boardClass is on the closed queue
+//Calls:        new LList(), LinkedQueue.getLength(), LinkedQueue.isEmpty(), LinkedQueue.dequeue(),
+//              LinkedQueue..priorityEnqueue(), LList.add, new boardClass()
+//Globals:	closed - queue of the closed list
     public static boolean isOnClosedBest(boardClass current) {
         boolean returner = false;
         LList holder = new LList();
@@ -463,11 +476,13 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	traceBackBest
 //Description:	traces back the path taken in the bestFirst search
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   boardClass current- passed last board of the bestFirst search
+//              int[][] goal - goal board
+//              LList closedList - passed list of all the moves in bestFirst search
+//Returns:     	int numMoves - number of moves bestFirst search took
+//Calls:        keyboardInputClass.getCharacter(), keyboardInputClass.getString(), new LList(),
+//              LList.add(), intComparer(), findParentBest(), LList.getEntry(), mapper2()
+//Globals:	input - access to keyboardInputClass()
     public static int traceBackBest(boardClass current, int[][] goal, LList closedList) {
         char showMoves = input.getCharacter(true, 'N', "Y,N", 1, "Would You Like To Step Through The Moves? (Y/N Default=N)");
         if (showMoves == 'Y') {
@@ -502,10 +517,11 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	findParentBest
 //Description:	finds the parent in the passed closed list of the current board
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   boardClass current - the current board that needs it's parent
+//              LList closedList - closed list of the moves used
+//Returns:     	boardClass returner - the boardClass containing the parent of the passed current
+//Calls:        LList.getEntry(), intComparer(), LList.getLength()
+//Globals:	none
 
     public static boardClass findParentBest(boardClass current, LList closedList) {
         boardClass returner = current;
@@ -520,10 +536,11 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	sumTiles
 //Description:	counts the number of tiles out of place, excluding spaces
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   int[][] goal - goal state
+//              int[][] current - current array that needs to checked for tiles out of place
+//Returns:     	int counter - number of tiles out of place
+//Calls:        none  
+//Globals:	none
 
     public static int sumTiles(int[][] goal, int[][] current) {
         int counter = 0;// initialize a counter
@@ -541,11 +558,10 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	deepCopy
 //Description:	makes a deep copy of an int[][]
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   int[][] passed - passed array that needs to be copied
+//Returns:     	int[][] copied - copied passed array
+//Calls:        none
+//Globals:	none
     public static int[][] deepCopy(int[][] passed) {
         int[][] copied = new int[passed.length][passed.length];// initialize a new 4x4 int array to be copied to
         for (int i = 0; i < passed.length; i++) {// row for
@@ -558,10 +574,11 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	intComparer
 //Description:	compares 2 int[][]'s to see if they match each other
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   int[][] orig - first passed array to be compared
+//              int[][] compare - second passed array to be compared
+//Returns:     	boolean returner - if the arrays equal each other
+//Calls:        none
+//Globals:	none
 
     public static boolean intComparer(int[][] orig, int[][] compare) {
         boolean returner = true;// assume they are the same
@@ -580,12 +597,12 @@ public class Amison2 {
     }// end intComparer
 //*************************************************************************************************************************
 //Method:	mapper1
-//Description:	maps characters to numbers, it is redundant but it works
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Description:	maps characters to numbers and returns a 2D array of integers, it is redundant but it works
+//Parameters:   char[] passed - passed array of chars that needs to be mapped to integers
+//Returns:     	int[][] returner - array that is mapped to numbers from the passed char array, to be used in 
+//              the search algorithms
+//Calls:        none
+//Globals:	none
     public static int[][] mapper1(char[] passer) {
         int[] usedInside = new int[16];
         for (int i = 0; i < passer.length; i++) {
@@ -717,10 +734,10 @@ public class Amison2 {
 //*************************************************************************************************************************
 //Method:	mapper2
 //Description:	maps numbers to characters, it is redundant but it works
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
+//Parameters:   int[][] passer - the passed int array that needs to be changed to characters
+//Returns:     	char[][] usedInside - the array that has been mapped to chars from the passed int[][]
+//Calls:        none
+//Globals:	none
 
     public static char[][] mapper2(int[][] passer) {
         char[][] usedInside = new char[4][4];
@@ -838,9 +855,21 @@ public class Amison2 {
         return usedInside;
     }// end of mapper2   
 }// end of Amison2
-
+//*************************************************************************************************************************
+//*************************************************************************************************************************
+// class:       boardClass
+// Description: constructor used to make boardClass objects
+// Data Values: none
+// Constant:    none 
+// Globals:     int[][] parent - parent board of the new board
+//              int[][] actual - actual board of the new board
+//              int depth - depth of the new board
+//              int tiles - number of tiles summed up from the current board
+//              int actualDepth - the passed depth used to be scored
+//              Comparable  score - the score to be sorted on, computed by actualDepth+tiles
+//*************************************************************************************************************************
+//*************************************************************************************************************************
 class boardClass implements Comparable<boardClass> {
-
     public int[][] parent;
     public int[][] actual;
     public int depth;
@@ -850,11 +879,19 @@ class boardClass implements Comparable<boardClass> {
 //*************************************************************************************************************************
 //Method:	boardClass
 //Description:	used to construct board objects for boardClass
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   int[][] passedParent - parent board of the new board
+//              int[][] passedActual - actual board of the new board
+//              int passedDepth - depth of the new board
+//              int passedTiles - number of tiles summed up from the current board
+//              int scoringDepth - the passed depth used to be scored
+//Returns:     	none
+//Calls:        none
+//Globals:	int[][] parent - parent board of the new board
+//              int[][] actual - actual board of the new board
+//              int depth - depth of the new board
+//              int tiles - number of tiles summed up from the current board
+//              int actualDepth - the passed depth used to be scored
+//              Comparable  score - the score to be sorted on, computed by actualDepth+tiles
     public boardClass(int[][] passedParent, int[][] passedActual, int passedDepth, int passedTiles, int scoringDepth) {
         parent = passedParent;
         actual = passedActual;
@@ -867,11 +904,10 @@ class boardClass implements Comparable<boardClass> {
 //Method:	compareTo
 //Description:	overrides the default comareTo so that the boards can be sorted in the priority
 //              queue by their score
-//Parameters:   
-//Returns:     	
-//Calls:        
-//Globals:	
-
+//Parameters:   boardClass next - next board in the queue
+//Returns:     	this.score.compareTo(next.score) - using the integer compareTo() method
+//Calls:        compareTo()
+//Globals:	score
     @Override
     public int compareTo(boardClass next) {
         return this.score.compareTo(next.score);
