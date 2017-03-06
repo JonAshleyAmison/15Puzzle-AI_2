@@ -17,7 +17,9 @@
 //              open - used by bestFirst as the open priority queue
 //*************************************************************************************************************************
 //*************************************************************************************************************************
+
 public class Amison2 {
+
     public static KeyboardInputClass input = new KeyboardInputClass();// access to KeyBoardInputClass()
     public static LinkedQueue closed = new LinkedQueue();// used by the bestFirst algorithm as the closed priority queue
     public static LinkedQueue open = new LinkedQueue();// used by the bestFirst algorithm as the open priority queue
@@ -31,6 +33,7 @@ public class Amison2 {
 //              mapper1(), scramble(), mapper2(), KeyboardInputClass.getInteger()
 //              KeyboardInputClass.getCharacter(), bestFirst(), breadthFirst()
 //Globals:	input- access to keyboard input class
+
     public static void main(String[] args) {
         System.out.println("Reagan JonAshley Amison");
         System.out.println("This program solves the 15 puzzle with 16 characters including atleast 1 blank");
@@ -43,10 +46,10 @@ public class Amison2 {
                 goal = input.getString("", "Input the 16 Character String to Use For The Goal,\nInclude Only Letters and Atleast 1 Space");
                 charArrayGoalFirst = goal.toCharArray();                // convert the string to an array of chars
                 boolean spacer = false;
-                for (int i = 0; i < charArrayGoalFirst.length; i++) {   
-                    if (charArrayGoalFirst[i] == ' ') {                 
+                for (int i = 0; i < charArrayGoalFirst.length; i++) {
+                    if (charArrayGoalFirst[i] == ' ') {
                         spacer = true;
-                        break; 
+                        break;
                     }
                 }// end of space checker for
                 if (spacer == true && goal.length() == 16) {            // if there is a space && there is 16 characters
@@ -114,8 +117,8 @@ public class Amison2 {
                 + "You Like? 0 = Enter Start String(default)"); // gets the number of scrambles from the user
         if (numScrambles == 0) {                                // if the user wants to enter the start state
             while (true) {
-                String start = input.getString("", "Input the 16 Character String to Use For The Start, \nInclude The Same Type(case sensative) And Same Number of Characters From The Goal String\n(Goal String: "+ goal + ")"); 
-                                                                // gets the start state from the user
+                String start = input.getString("", "Input the 16 Character String to Use For The Start, \nInclude The Same Type(case sensative) And Same Number of Characters From The Goal String\n(Goal String: " + goal + ")");
+                // gets the start state from the user
                 if (start.length() == 16) {                     // checks to see if the length is 16
                     entered = start;
                     break;
@@ -151,7 +154,7 @@ public class Amison2 {
             scrambledArray = current;
         }
         return scrambledArray;                                  // returns the scrambled array
-    }  
+    }
 //*************************************************************************************************************************
 //Method:	breadthFirst
 //Description:	does the breadthFirst search if the user wants to
@@ -162,6 +165,7 @@ public class Amison2 {
 //              LList.getEntry(), KeyboardInputClass.getString(), getChildren(), LList.add(), new boardClass
 //Globals:	parentChild- access to the parentChild list
 //              input - access to keyboardInputClass()
+
     public static void breadthFirst(int[][] passed, int[][] goal) {
         System.out.println("working....");
         parentChild.clear();                                     // clear the parent child data structure
@@ -279,9 +283,10 @@ public class Amison2 {
 //Returns:     	int[][] returner - the found parent
 //Calls:        LList.getLength(), LList.getEntry(), intComparer(), deepCopy()
 //Globals:	none
+
     public static int[][] findParentBreadth(int[][] passed, LList passedList) {
         int[][] returner = new int[passed.length][passed.length];           // new array to hold the parent
-        for (int i = passedList.getLength(); i > 0; i--) {                  
+        for (int i = passedList.getLength(); i > 0; i--) {
             boardClass boardObject = (boardClass) passedList.getEntry(i);   // get the current index in the passedList
             int[][] child = (int[][]) boardObject.actual;                   // make an int array of the child
             if (intComparer(passed, child)) {                               // if the parent is found
@@ -298,6 +303,7 @@ public class Amison2 {
 //Returns:     	LList children - a list of arrays of children for the passed array
 //Calls:        new LList(), deepCopy(), LList.add(), 
 //Globals:	none
+
     public static LList getChildren(int[][] passed) {
         LList children = new LList();                       //LList to hold the children
         for (int i = 0; i < passed.length; i++) {
@@ -354,7 +360,7 @@ public class Amison2 {
         while (open.isEmpty() == false) {                                // while open is not empty
             boardClass x = (boardClass) open.dequeue();                  // get the first board in the queue
             if (intComparer((int[][]) x.actual, goal) == true) {         // if the current is a goal state
-                closed.priorityEnqueue(x);                                
+                closed.priorityEnqueue(x);
                 LList closedList = queueToList(closed);                  // convert the queue to a list
                 success = true;
                 input.getString("", "Success! Press Enter To Show All Boards");
@@ -382,7 +388,7 @@ public class Amison2 {
                     if (isOnOpen == false && isOnClosed == false) {     // if the current board is not on open or closed
                         open.priorityEnqueue(current);
                     }
-                }               
+                }
             }
             closed.priorityEnqueue(x);
         }
@@ -398,6 +404,7 @@ public class Amison2 {
 //Returns:     	LList newList - the copied queue to a list
 //Calls:        LinkedQueue.isEmpty(), LList.add(), LinkedQueue.dequeue(), new LList()
 //Globals:	none
+
     public static LList queueToList(LinkedQueue passed) {
         LList newList = new LList();                // new list to return
         while (passed.isEmpty() == false) {         // while the linkedQueue is not empty
@@ -414,27 +421,28 @@ public class Amison2 {
 //Calls:        new LList(), LinkedQueue.isEmpty(), LinkedQueue.dequeue(), intComparer(), LinkedQueue.priorityEnqueue()
 //              LList.add(), LList.getEntry()
 //Globals:	open - queue of the open list
+
     public static boolean isOnOpenBest(boardClass current) {
         boolean returner = false;
-        LList holder = new LList();
+        LList holder = new LList();                             // new list to hold everything that is dequeued
         while (open.isEmpty() == false) {
-            boardClass opened = (boardClass) open.dequeue();
-            boolean isOn = intComparer((int[][]) opened.actual, (int[][]) current.actual);
-            if (isOn == true) {
+            boardClass opened = (boardClass) open.dequeue();    // get the first board in the queue
+            boolean isOn = intComparer((int[][]) opened.actual, (int[][]) current.actual);// if the current is the same as opened
+            if (isOn == true) {                                 // if it is in the queue
                 returner = true;
-                if (current.actualDepth < opened.actualDepth) {
-                    opened.depth = current.depth;
-                    open.priorityEnqueue(current);
+                if (current.actualDepth < opened.actualDepth) { // if it was reached by a shorter path
+                    opened.depth = current.depth;               // set the old depth to the new depth
+                    open.priorityEnqueue(current);              // add the current to the list
                     break;
                 }
-            } else {
+            } else {                                            // if it has not been found yet
                 holder.add(opened);
             }
         }
-        for (int i = holder.getLength(); i > 0; i--) {
+        for (int i = holder.getLength(); i > 0; i--) {          // priority enqueue everything in holder
             open.priorityEnqueue((boardClass) holder.getEntry(i));
         }
-        return returner;
+        return returner;                                        // return if current was on open or not
     }
 //*************************************************************************************************************************
 //Method:	isOnClosedBest
@@ -444,27 +452,27 @@ public class Amison2 {
 //Calls:        new LList(), LinkedQueue.getLength(), LinkedQueue.isEmpty(), LinkedQueue.dequeue(),
 //              LinkedQueue..priorityEnqueue(), LList.add, new boardClass()
 //Globals:	closed - queue of the closed list
+
     public static boolean isOnClosedBest(boardClass current) {
         boolean returner = false;
-        LList holder = new LList();
+        LList holder = new LList();                                  // new list to hold everything that is dequeued
         if (closed.getLength() != 0) {
-            while (closed.isEmpty() == false) {
-                boardClass compare = (boardClass) closed.dequeue();
-                boolean isOn = intComparer((int[][]) compare.actual, (int[][]) current.actual);
-                if (isOn == true) {
+            while (closed.isEmpty() == false) {                      // while closed is not empty
+                boardClass compare = (boardClass) closed.dequeue();  // get the first thing off of the queue
+                boolean isOn = intComparer((int[][]) compare.actual, (int[][]) current.actual);// if the current is the same as compare
+                if (isOn == true) {                                  // if it is in the queue
                     returner = true;
-                    if ((int) compare.actualDepth > (int) current.actualDepth) {
-                        boardClass newBoard = new boardClass(current.parent, current.actual, current.depth, current.tiles, current.depth);
-                        open.priorityEnqueue(newBoard);
+                    if ((int) compare.actualDepth > (int) current.actualDepth) {// if current was reached by a shorter path                       
+                        open.priorityEnqueue(current);                          // add the current to open
                         break;
-                    } else {
-                        holder.add(compare);
+                    } else {                                                    // if current does not have a shorter path
+                        holder.add(compare);                                    
                     }
-                } else {
+                } else {                                                        // if it has not been found yet
                     holder.add(compare);
                 }
             }
-            for (int i = 1; i <= holder.getLength(); i++) {
+            for (int i = 1; i <= holder.getLength(); i++) {                     // priority enqueue everything in holder
                 closed.enqueue((boardClass) holder.getEntry(i));
             }
         }
@@ -480,36 +488,34 @@ public class Amison2 {
 //Calls:        keyboardInputClass.getCharacter(), keyboardInputClass.getString(), new LList(),
 //              LList.add(), intComparer(), findParentBest(), LList.getEntry(), mapper2()
 //Globals:	input - access to keyboardInputClass()
+
     public static int traceBackBest(boardClass current, int[][] goal, LList closedList) {
-        char showMoves = input.getCharacter(true, 'N', "Y,N", 1, "Would You Like To Step Through The Moves? (Y/N Default=N)");
-        if (showMoves == 'Y') {
-            System.out.println("Press Enter To Step Through");
-        }
-        LList movesInOrder = new LList();
-        movesInOrder.add(current);
+        char showMoves = input.getCharacter(true, 'N', "Y,N", 1, "Would You Like To Step Through The Moves? (Y/N Default=N)");       
+        LList movesInOrder = new LList();                           // new list to hold the order of the moves
+        movesInOrder.add(current);                                  // add the last move to the list
         int numMoves = 0;
-        while (intComparer(current.actual, goal) == false) {
-            current = findParentBest(current, closedList);
-            movesInOrder.add(1, current);
+        while (intComparer(current.actual, goal) == false) {        // while the current is not a goal state
+            current = findParentBest(current, closedList);          // find the parent of the current board
+            movesInOrder.add(1, current);                           // add the current to the first index
             numMoves++;
         }
-        for (int i = 1; i <= movesInOrder.getLength(); i++) {
-            boardClass first = (boardClass) movesInOrder.getEntry(i);
-            char[][] chars = mapper2((int[][]) first.actual);
-            for (int j = 0; j < chars.length; j++) {
+        for (int i = 1; i <= movesInOrder.getLength(); i++) {       // used to get the moves
+            boardClass first = (boardClass) movesInOrder.getEntry(i);// get the current index in movesInOrder
+            char[][] chars = mapper2((int[][]) first.actual);        // map the current boardClass to chars
+            for (int j = 0; j < chars.length; j++) {                 // used to print the move
                 for (int k = 0; k < chars.length; k++) {
                     System.out.print(chars[j][k] + " ");
                 }
                 System.out.println("");
             }
             System.out.println("(Raw Score = " + first.tiles + " Depth = " + first.depth + " Total Score = " + first.score + ")");
-            if (showMoves == 'Y') {
+            if (showMoves == 'Y') {                                  // if user wants to step through the moves
                 input.getString("", "Press Enter To Step:");
             } else {
                 System.out.println("");
             }
         }
-        return numMoves;
+        return numMoves;// return the number of moves it took to find the path
     }
 //*************************************************************************************************************************
 //Method:	findParentBest
@@ -521,14 +527,14 @@ public class Amison2 {
 //Globals:	none
 
     public static boardClass findParentBest(boardClass current, LList closedList) {
-        boardClass returner = current;
-        for (int i = closedList.getLength(); i > 0; i--) {
-            boardClass board = (boardClass) closedList.getEntry(i);
-            if (intComparer(current.parent, board.actual) == true) {
-                returner = board;
+        boardClass returner = current;                      // initialize a new boardClass to be returned
+        for (int i = closedList.getLength(); i > 0; i--) {  // used to get the boards from closed
+            boardClass board = (boardClass) closedList.getEntry(i);// get current index from closedList
+            if (intComparer(current.parent, board.actual) == true) {// if the parent is found
+                returner = board;                                   // set returner to the current board
             }
         }
-        return returner;
+        return returner;                                            // return the found parent boardClass
     }
 //*************************************************************************************************************************
 //Method:	sumTiles
@@ -540,17 +546,17 @@ public class Amison2 {
 //Globals:	none
 
     public static int sumTiles(int[][] goal, int[][] current) {
-        int counter = 0;// initialize a counter
-        for (int i = 0; i < current.length; i++) {// row for
-            for (int j = 0; j < current.length; j++) {// column for
-                if (current[i][j] != 0) {
-                    if (current[i][j] != goal[i][j]) {//if tile is not equal to goal 
-                        counter++;// increment the count
-                    }// end if tile is not equal to goal  
+        int counter = 0;
+        for (int i = 0; i < current.length; i++) {
+            for (int j = 0; j < current.length; j++) {
+                if (current[i][j] != 0) {               // if the current index is not a space
+                    if (current[i][j] != goal[i][j]) {  //if tile is not equal to goal 
+                        counter++;
+                    }  
                 }
-            } //end column for           
-        }//end row for
-        return counter;// return the number of tiles out of place
+            }           
+        }
+        return counter;                                 // return the number of tiles out of place
     }// end sumTiles
 //*************************************************************************************************************************
 //Method:	deepCopy
@@ -559,14 +565,15 @@ public class Amison2 {
 //Returns:     	int[][] copied - copied passed array
 //Calls:        none
 //Globals:	none
+
     public static int[][] deepCopy(int[][] passed) {
-        int[][] copied = new int[passed.length][passed.length];// initialize a new 4x4 int array to be copied to
-        for (int i = 0; i < passed.length; i++) {// row for
-            for (int j = 0; j < passed.length; j++) {// column for
-                copied[i][j] = passed[i][j];//copy the passed index to the new index
-            }// end column for
-        }// end row for
-        return copied;// return the new copy
+        int[][] copied = new int[passed.length][passed.length]; // initialize a new 4x4 int array to be copied to
+        for (int i = 0; i < passed.length; i++) {
+            for (int j = 0; j < passed.length; j++) {
+                copied[i][j] = passed[i][j];                    //copy the passed index to the new index
+            }
+        }
+        return copied;                                          // return the new copy
     }// end deep copy
 //*************************************************************************************************************************
 //Method:	intComparer
@@ -578,19 +585,19 @@ public class Amison2 {
 //Globals:	none
 
     public static boolean intComparer(int[][] orig, int[][] compare) {
-        boolean returner = true;// assume they are the same
-        for (int i = 0; i < compare.length; i++) {// row for
-            for (int j = 0; j < compare[0].length; j++) {// column for
-                if (compare[i][j] != orig[i][j]) {// if the indexes differ
-                    returner = false;// set returner to false
-                    break;// break column for
-                }// end if indexes differ
-                if (returner == false) {// if indexes differ row for break
-                    break;// break row for
-                }// end if indexes differ row for
-            }// end column for        
-        }// end row for
-        return returner;// return if they differ or not
+        boolean returner = true;                    // assume they are the same
+        for (int i = 0; i < compare.length; i++) {
+            for (int j = 0; j < compare[0].length; j++) {
+                if (compare[i][j] != orig[i][j]) {  // if the indexes differ
+                    returner = false;
+                    break;
+                }
+                if (returner == false) {            // if indexes differ row for break
+                    break;
+                }
+            }       
+        }
+        return returner;                            // return if they differ or not
     }// end intComparer
 //*************************************************************************************************************************
 //Method:	mapper1
@@ -600,6 +607,7 @@ public class Amison2 {
 //              the search algorithms
 //Calls:        none
 //Globals:	none
+
     public static int[][] mapper1(char[] passer) {
         int[] usedInside = new int[16];
         for (int i = 0; i < passer.length; i++) {
@@ -711,22 +719,22 @@ public class Amison2 {
                 usedInside[i] = 52;
             }
         }
-        int[][] returner = new int[4][4];
+        int[][] returner = new int[4][4];               // new array to hold the integer array
         for (int j = 0; j < usedInside.length; j++) {
-            if (j < 4) {
+            if (j < 4) {                                // if the first row is needed
                 returner[0][j] = usedInside[j];
             }
-            if (j > 3 && j < 8) {
+            if (j > 3 && j < 8) {                       // if the second row is needed
                 returner[1][j - 4] = usedInside[j];
             }
-            if (j > 7 && j < 12) {
+            if (j > 7 && j < 12) {                      // if the third row is needed
                 returner[2][j - 8] = usedInside[j];
             }
-            if (j > 11 && j < 16) {
+            if (j > 11 && j < 16) {                     // if the fourth row is needed
                 returner[3][j - 12] = usedInside[j];
             }
         }
-        return returner;
+        return returner;                                // return the new int array
     }// end of mapper
 //*************************************************************************************************************************
 //Method:	mapper2
@@ -738,8 +746,8 @@ public class Amison2 {
 
     public static char[][] mapper2(int[][] passer) {
         char[][] usedInside = new char[4][4];
-        for (int i = 0; i < passer.length; i++) {
-            for (int j = 0; j < passer[0].length; j++) {
+        for (int i = 0; i < passer.length; i++) {               // row for
+            for (int j = 0; j < passer[0].length; j++) {        // column for
                 if (passer[i][j] == 0) {
                     usedInside[i][j] = '.';
                 } else if (passer[i][j] == 1) {
@@ -849,7 +857,7 @@ public class Amison2 {
                 }
             }
         }
-        return usedInside;
+        return usedInside;                          // return the new char array
     }// end of mapper2   
 }// end of Amison2
 //*************************************************************************************************************************
@@ -866,13 +874,15 @@ public class Amison2 {
 //              Comparable  score - the score to be sorted on, computed by actualDepth+tiles
 //*************************************************************************************************************************
 //*************************************************************************************************************************
+
 class boardClass implements Comparable<boardClass> {
-    public int[][] parent;
-    public int[][] actual;
-    public int depth;
-    public int tiles;
-    public int actualDepth;
-    public Comparable score;
+
+    public int[][] parent;          // parent board of the actual
+    public int[][] actual;          // actual board
+    public int depth;               // depth of the current board
+    public int tiles;               // heuristic of the current board
+    public int actualDepth;         // actual depth of the board, used in the score computation
+    public Comparable score;        // number of tiles out of place + actual depth
 //*************************************************************************************************************************
 //Method:	boardClass
 //Description:	used to construct board objects for boardClass
@@ -889,6 +899,7 @@ class boardClass implements Comparable<boardClass> {
 //              int tiles - number of tiles summed up from the current board
 //              int actualDepth - the passed depth used to be scored
 //              Comparable  score - the score to be sorted on, computed by actualDepth+tiles
+
     public boardClass(int[][] passedParent, int[][] passedActual, int passedDepth, int passedTiles, int scoringDepth) {
         parent = passedParent;
         actual = passedActual;
@@ -905,8 +916,9 @@ class boardClass implements Comparable<boardClass> {
 //Returns:     	this.score.compareTo(next.score) - using the integer compareTo() method
 //Calls:        compareTo()
 //Globals:	score
+
     @Override
     public int compareTo(boardClass next) {
-        return this.score.compareTo(next.score);
+        return this.score.compareTo(next.score);            /// return the compared value of the current and next scores
     }// end of compareTo
 }
